@@ -1,0 +1,26 @@
+#!/bin/bash
+
+for i in {2..20}
+do
+   let ia=i-1
+   let is=1+5*ia
+   let ie=5*ia+5
+   echo "#!/bin/bash" > tmp3.sub
+   echo "#PBS -q regular" >> tmp3.sub
+   #echo "#PBS -l nodes=1:ppn=12,walltime=20:00:00,pmem=100mb" >> tmp3.sub
+   #echo "#PBS-l walltime=00:30:00 -l mppwidth=12" >> tmp3.sub
+   echo "#PBS -l mppwidth=24" >>tmp3.sub
+   echo "#PBS -l walltime=00:50:00" >>tmp3.sub    
+   echo "#PBS -N rec_CMASS_S20_N$is" >>tmp3.sub
+   echo "#PBS -o outfileCS0.txt " >> tmp3.sub
+   echo "#PBS -e errfileCS0.txt " >> tmp3.sub
+   echo "#PBS -j oe " >> tmp3.sub
+   echo "export OMP_NUM_THREADS=6" >>tmp3.sub
+   echo "cd /global/u1/a/angela/Recon_programs/" >> tmp3.sub
+   echo "module load fftw/2.1.5.7" >>tmp3.sub
+   #echo "./reconDR12 $is $ie 9 1" >>tmp3.sub
+   echo "aprun -n 1 ./recon_xyz_S20 9 $is $ie 2" >>tmp3.sub
+   qsub tmp3.sub
+done
+ #1 = extended CMASS
+ #2 = CMASS
