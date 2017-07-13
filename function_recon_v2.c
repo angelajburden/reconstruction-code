@@ -341,8 +341,8 @@ void adjust_psi_interpolate(int NG, int NGAL, double dkx[], double dky[], double
     if (fabs(shiftx)>100) printf("galx %d dx=%lf, dy=%lf, dz=%lf,i=%d, j-%d, k=%d \n", p, dkx[rA], dky[rA], dkz[rA],i,j,k );
     if (fabs(shifty)>100) printf("galy %d dx=%lf, dy=%lf, dz=%lf,i=%d, j-%d, k=%d \n", p, dkx[rA], dky[rA], dkz[rA],i,j,k );
     if (fabs(shiftz)>100) printf("galz %d dx=%lf, dy=%lf, dz=%lf,i=%d, j-%d, k=%d \n", p, dkx[rA], dky[rA], dkz[rA],i,j,k );
-     double x_r = cos(gal[p].dec)*sin(gal[p].ra);
-     double y_r = cos(gal[p].dec)*cos(gal[p].ra);
+     double x_r = cos(gal[p].dec)*cos(gal[p].ra);
+     double y_r = cos(gal[p].dec)*sin(gal[p].ra);
      double z_r = sin(gal[p].dec);
 
      double shift_realx= shiftx -(f_growth/(bias + f_growth))*(dot_psi*x_r);
@@ -355,8 +355,8 @@ void adjust_psi_interpolate(int NG, int NGAL, double dkx[], double dky[], double
 
 
      RSD_x =f_growth*(shift_realx*x_r + shift_realy*y_r + shift_realz*z_r)*x_r;
-     RSD_y =f_growth*(shift_realx*x_r + shift_realy*y_r + shift_realz*z_r)*y_r;
-     RSD_z =f_growth*(shift_realx*x_r + shift_realy*y_r + shift_realz*z_r)*z_r;
+     RSD_y =f_growth*(shift_realy*y_r + shift_realy*y_r + shift_realz*z_r)*y_r;
+     RSD_z =f_growth*(shift_realz*z_r + shift_realy*y_r + shift_realz*z_r)*z_r;
     // if ( p > 100 && p <200) printf("RSDx = %lf\n",RSD_x);
      if (flag ==1) {
          gal[p].cp[0] += -D_factor*(shift_realx);
@@ -411,7 +411,7 @@ void distribute_randoms(struct basic_gal *uni, struct weight_gal *gal, int NGAL,
   }
 
 }
-void output_ra_dec(struct weight_gal *gal, int NGAL) {
+void output_ra_dec(struct basic_gal *gal, int NGAL) {
   for (int i=1; i<NGAL; i++) {
     gal[i].new_dist = sqrt(gal[i].cp[0]*gal[i].cp[0] + gal[i].cp[1]*gal[i].cp[1] +gal[i].cp[2]*gal[i].cp[2]);
     gal[i].dec = asin(gal[i].cp[2]/gal[i].new_dist);
@@ -419,7 +419,7 @@ void output_ra_dec(struct weight_gal *gal, int NGAL) {
     if (gal[i].ra<0.000000)gal[i].ra +=(2*pi);            
   }
 }
-void calc_red_spline(int NGAL, struct weight_gal *gal, double spline_dist [], double spline_red [],double y2_dist[], int flag) {
+void calc_red_spline(int NGAL, struct basic_gal *gal, double spline_dist [], double spline_red [],double y2_dist[], int flag) {
 
   for (int i=1; i<NGAL; i++) {
     double galred;
